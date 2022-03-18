@@ -66,5 +66,5 @@ We are happy to thank two external service providers for supporting this initiat
 ___
 
 ## License
--
+
 HelpUkraine.php is provided by [24U Software](https://24usoftware.com) ([24U s.r.o.](https://24u.cz)) and licensed under the "GNU LGPLv3" License.

@@ -29,7 +29,13 @@ function get_url($url)
   if (ini_get('allow_url_fopen'))
   {
     // The easiest way
-    return file_get_contents($url);
+    $result = @file_get_contents($url);
+    if ($result == false)
+    {
+      $error = error_get_last();
+      return json_encode(["status" => $error["message"]]);
+    }
+    return $result;
   }
   elseif (function_exists('curl_init'))
   {
@@ -88,24 +94,18 @@ function helpukraine_get_news(&$news_list_en, &$news_list_ru, &$news_articles, &
   $news_json = get_url("https://24usw.com/getuanews");
   $news_decoded = json_decode($news_json, true);
   $status = $news_decoded["status"] ?? "Invalid result: $news_json";
-  $translations = [
-    "en" => [
-      "source" => "Source",
-      "no_news" => "No news found",
-      "error" => "Error fetching news, please try again later",
-      ],
-    "ru" => [
-      "source" => "Источник",
-      "no_news" => "Новости не найдены",
-      "error" => "Ошибка при получении новостей, повторите попытку позже",
-      "Left" => "Левая",
-      "Lean Left" => "Наклон влево",
-      "Center" => "Центр",
-      "Lean Right" => "Наклон вправо",
-      "Right" => "Правая",
-      "Mixed" => "Смешанная",
-      "Bias" => "Предвзятость"
-      ]
+  $ru = [
+    "source" => "Источник",
+    "no_news" => "Новости не найдены",
+    "error" => "Ошибка при получении новостей, повторите попытку позже",
+    "via" => "через", 
+    "Left" => "Левая",
+    "Lean Left" => "Наклон влево",
+    "Center" => "Центр",
+    "Lean Right" => "Наклон вправо",
+    "Right" => "Правая",
+    "Mixed" => "Смешанная",
+    "Bias" => "Рейтинг предвзятости СМИ AllSides"
     ];
   if ($status == "ok")
   {
@@ -117,8 +117,8 @@ function helpukraine_get_news(&$news_list_en, &$news_list_ru, &$news_articles, &
     $id = 0;
     if (empty($articles))
     {
-      $news_list_en = $translations["en"]["no_news"];
-      $news_list_ru = $translations["ru"]["no_news"];
+      $news_list_en = "No news found";
+      $news_list_ru = $ru["no_news"];
       return;
     }
     foreach ($articles as $article)
@@ -127,28 +127,43 @@ function helpukraine_get_news(&$news_list_en, &$news_list_ru, &$news_articles, &
       $author = empty($article["author"] ?? "") ? "" : ($article["author"] . " | ");
       $link = $article["link"] ?? "";
       $pubdate = $article["pubDate"] ?? "";
-      $rating_en = empty($article["rating"] ?? "") ? "" : (" | Bias: " . $article["rating"]);
-      $rating_ru = empty($rating_en) ? "" : (" | " . $translations["ru"]["Bias"] . ": " . $translations["ru"][$article["rating"]]);
-      $source_en = $author . ($article["source_en"] ?? "") . $rating_en;
-      $source_ru = $author . ($article["source_ru"] ?? "") . $rating_ru;
+      $feed = $article["feed"] ?? "";
+      
+      $rating_en = $article["rating"] ?? "";
+      $rating_ru = empty($rating_en) ? "" : $ru[$article["rating"]];
+      if (!empty($rating_en)) $rating_en = "AllSides Media Bias Rating: " . $rating_en;
+      if (!empty($rating_ru)) $rating_ru = $ru["Bias"] . ": " . $rating_ru;
+      
+      $rating_url = $article["rating_url"] ?? "";
+      if (!empty($rating_url))
+      {
+        if (!empty($rating_en)) $rating_en = "<a href=\"$rating_url\" target=\"_blank\">$rating_en</a>";
+        if (!empty($rating_ru)) $rating_ru = "<a href=\"$rating_url\" target=\"_blank\">$rating_ru</a>";
+      }
+      
+      $source_en = "<a href=\"$link\" target=\"_blank\">$pubdate " . $author . ($article["source_en"] ?? "") . "</a>" .
+        (empty($feed) ? "" : " via $feed") . (empty($rating_en) ? "" : (" | " . $rating_en));
+      $source_ru = "<a href=\"$link\" target=\"_blank\">$pubdate " . $author . ($article["source_ru"] ?? "") . "</a>"  .
+        (empty($feed) ? "" : " " . $ru["via"] . " $feed") . (empty($rating_ru) ? "" : (" | " . $rating_ru));
       $title_en = $article["title_en"] ?? "";
       $title_ru = $article["title_ru"] ?? "";
       $summary_en = $article["summary_en"] ?? "";
       $summary_ru = $article["summary_ru"] ?? "";
       $content_en = $article["content_en"] ?? "";
       $content_ru = $article["content_ru"] ?? "";
+      
       if (!empty($title_en) and !empty($summary_en) and !empty($source_en))
       {
         if (empty($content_en))
         {
-          $news_list_en .= "<p><strong>$title_en</strong><br>$summary_en<br>" .
-                           "<i><a href=\"$link\" target=\"_blank\">$pubdate $source_en</a></i></p>\n";
+          $news_list_en .= "<p><strong><a href=\"$link\" target=\"_blank\">$title_en</a></strong><br>$summary_en<br>" .
+                           "<i>$source_en</i></p>\n";
         }
         else
         {
           $news_list_en .= "<p><strong><a href=\"#\" onClick=\"showArticle('en$id')\">$title_en</a></strong><br>$summary_en " .
                            "<i><a href=\"#\" onClick=\"showArticle('en$id')\">&raquo; Read More</a></i><br>" .
-                           "<i><a href=\"$link\" target=\"_blank\">$pubdate $source_en</a></i></p>\n";
+                           "<i>$source_en</i></p>\n";
           $news_articles .= <<<ARTICLEENHTML
       
 <div id="en$id" class="modal-background">
@@ -157,7 +172,7 @@ function helpukraine_get_news(&$news_list_en, &$news_list_ru, &$news_articles, &
 <div class="modal-article">
 <h2>$title_en</h2>
 <p>$content_en</p>
-<p><i><a href="$link" target="_blank">$pubdate $source_en</a></i></p>
+<p><i>$source_en</i></p>
 </div>
 </div>
 </div>
@@ -169,14 +184,14 @@ ARTICLEENHTML;
       {
         if (empty($content_en))
         {
-          $news_list_ru .= "<p><strong>$title_ru</strong><br>$summary_ru<br>" .
-                           "<i><a href=\"$link\" target=\"_blank\">$pubdate $source_ru</a></i></p>\n";
+          $news_list_ru .= "<p><strong><a href=\"$link\" target=\"_blank\">$title_ru</a></strong><br>$summary_ru<br>" .
+                           "<i>$source_ru</i></p>\n";
         }
         else
         {
           $news_list_ru .= "<p><strong><a href=\"#\" onClick=\"showArticle('ru$id')\">$title_ru</a></strong><br>$summary_ru " .
                            "<i><a href=\"#\" onClick=\"showArticle('en$id')\">&raquo; Читать далее</a></i><br>" .
-                           "<i><a href=\"$link\" target=\"_blank\">$pubdate $source_ru</a></i></p>\n";
+                           "<i>$source_ru</i></p>\n";
           $news_articles .= <<<ARTICLERUHTML
       
 <div id="ru$id" class="modal-background">
@@ -185,7 +200,7 @@ ARTICLEENHTML;
 <div class="modal-article">
 <h2>$title_ru</h2>
 <p>$content_ru</p>
-<p><i><a href="$link" target="_blank">$pubdate $source_ru</a></i></p>
+<p><i>$source_ru</i></p>
 </div>
 </div>
 </div>
@@ -197,8 +212,8 @@ ARTICLERUHTML;
   }
   else
   {
-    $news_list_en = $translations["en"]["error"] . " ($status)<!--$news_json-->";
-    $news_list_ru = $translations["ru"]["error"] . " ($status)";
+    $news_list_en = "Error fetching news, please try again later ($status)<!--$news_json-->";
+    $news_list_ru = $ru["error"] . " ($status)";
     $credits_en = "";
     $credits_ru = "";
   }
@@ -247,7 +262,7 @@ p { margin: 1em 0 0 0 }
 <div class="en" lang="en">
 <div class="content">
 <h1>Stop The War!</h1>
-<p>On the 24th of February 2022 Russian armed forces invaded Ukraine and started war against a sovereign country. The attack came from both Russia and Belarus. Thousands of Ukrainian and Russian soldiers and hundreds of Ukrainian civilians have already been killed.</p>
+<p>On the 24th of February 2022 Russian armed forces invaded Ukraine and started war against a sovereign country. The attack came from both Russia and Belarus. Thousands of Ukrainian and Russian soldiers and hundreds of Ukrainian civilians, including women and children, have already been killed.</p>
 <p><strong>If you protest</strong> against the war, <strong>you may get arrested</strong> for up to 15 years. Even if you just say that attacking another country with weapons is a war, you may be prosecuted the same way.</p>
 <p>But <strong>if you close your eyes</strong> and stay quiet, <strong>you will be an accomplice</strong> to the mass murderer who claims to be your president.</p>
 <h2>What do you choose?</h2>
@@ -262,7 +277,7 @@ $credits_en
 <div class="ru" lang="ru">
 <div class="content">
 <h1>Остановите войну! </h1>
-<p>24 февраля 2022 года российские вооруженные силы вторглись в Украину и начали войну против суверенной страны. Нападение произошло как со стороны России, так и со стороны Беларуси. Тысячи украинских и российских солдат и сотни украинских гражданских лиц уже убиты.</p> <p>
+<p>24 февраля 2022 года российские вооруженные силы вторглись в Украину и начали войну против суверенной страны. Нападение произошло как со стороны России, так и со стороны Беларуси. Тысячи украинских и российских солдат и сотни украинских гражданских лиц, включая женщин и детей, уже убиты.</p> <p>
 <p><strong>Если вы протестуете</strong> против войны, <strong>вас могут арестовать</strong> на срок до 15 лет. Даже если вы просто скажете, что нападение на другую страну с оружием - это война, вас могут привлечь к ответственности таким же образом.</p>
 <p>Но <strong>если вы закроете глаза</strong> и будете молчать, <strong>вы станете сообщником</strong> массового убийцы, который называет себя вашим президентом.</p>
 <h2>Что вы выберете? </h2>

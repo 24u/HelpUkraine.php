@@ -49,6 +49,11 @@ That's it. Nothing else needed. The special web page will appear in all the foll
 There is also a mechanism to prevent it from appearing, simply by adding `?helpukraine=0` to the URL. There is also a link using this approach in the end of the page.
 
 
+### Note the IP geolocation limit
+
+Note that the free API used by default to identify the client's country by IP has a limit of 45 calls per minute. If your website receives more traffict than that 45 visits per minute, then you might want to consider replacing the default API call in the `helpukraine_get_ip_country` function with another one that does not have such a low limit.
+
+
 ### Feel free to make or suggest changes
 
 This is our attempt to help to stop the war. If you want to do more than just install it, if you have ideas how to make it better, feel free to suggest changes or submit pull requests with code changes you make.
@@ -68,3 +73,5 @@ ___
 ## License
 
 HelpUkraine.php is provided by [24U Software](https://24usoftware.com) ([24U s.r.o.](https://24u.cz)) and licensed under the "GNU LGPLv3" License.
+
+AllSides Media Bias Ratings:tm: by AllSides.com are licensed under a Creative Commons Attribution-NonCommercial 4.0 International License. These ratings may be used for research or noncommercial purposes with attribution.

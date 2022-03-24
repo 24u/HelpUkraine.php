@@ -59,14 +59,15 @@ Note that the free API used by default to identify the client's country by IP ha
 This is our attempt to help to stop the war. If you want to do more than just install it, if you have ideas how to make it better, feel free to suggest changes or submit pull requests with code changes you make.
 
 
-### Thanks to AllSides.com and DeepL for support
+### Thanks to AllSides.com, Perigon and DeepL for support
 
 We are happy to thank two external service providers for supporting this initiative.
 
 [AllSides.com](https://www.allsides.com/) is an U.S. based news websites "exposing people to information and ideas from all sides of the political spectrum so they can better understand the world — and each other. Their balanced news coverage, media bias ratings, civil dialogue opportunities, and technology platform are available for everyone and can be integrated by schools, nonprofits, media companies, and more." AllSides kindly created a JSON news feed focused on the war in Ukraine for us to use in our script as a data source.
 
-[DeepL](https://www.deepl.com/) is a German AI-powered language translator capable of accurate translations that are often hard to differentiate from human-made translations. DeepL kindly provided us with a complimentary access to their translation API, so that we can deliver the balanced news from AllSides.com not only in English, but also in Russian.
+[Perigon](https://goperigon.com/) is a smart news API providing up-to-the-minute news & events data from over 40,000 sources across the web, structured & enriched by AI. Perigon kindly provided free access to their API for the use by the HelpUkraine.php script.
 
+[DeepL](https://www.deepl.com/) is a German AI-powered language translator capable of accurate translations that are often hard to differentiate from human-made translations. DeepL kindly provided us with a complimentary access to their translation API, so that we can deliver the balanced news from AllSides.com not only in English, but also in Russian.
 
 ___
 

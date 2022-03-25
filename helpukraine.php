@@ -111,7 +111,7 @@ function helpukraine_get_news(&$news_list_en, &$news_list_ru, &$news_articles, &
   {
     $articles = $news_decoded["articles"] ?? [];
     $credits_en = $news_decoded["credits_en"] ?? "";
-    $creduts_ru = $news_decoded["credits_ru"] ?? "";
+    $credits_ru = $news_decoded["credits_ru"] ?? "";
     $news_list = "";
     $news_articles = "";
     $id = 0;
@@ -266,7 +266,7 @@ p { margin: 1em 0 0 0 }
 <p><strong>If you protest</strong> against the war, <strong>you may get arrested</strong> for up to 15 years. Even if you just say that attacking another country with weapons is a war, you may be prosecuted the same way.</p>
 <p>But <strong>if you close your eyes</strong> and stay quiet, <strong>you will be an accomplice</strong> to the mass murderer who claims to be your president.</p>
 <h2>What do you choose?</h2>
-<p>If you're connecting from Russia or Belarus then your government is actively blocking your access to independent information sources. To help you to know what's really happening, here is a balanced list of the most recent news from variety of sources:</p>
+<p>If you're connecting from Russia or Belarus then your government is actively blocking your access to independent information sources. To help you to know what's really happening, here is an uncensored list of recent news from variety of sources:</p>
 <div class="news">
 $news_list_en
 $credits_en
@@ -281,7 +281,7 @@ $credits_en
 <p><strong>Если вы протестуете</strong> против войны, <strong>вас могут арестовать</strong> на срок до 15 лет. Даже если вы просто скажете, что нападение на другую страну с оружием - это война, вас могут привлечь к ответственности таким же образом.</p>
 <p>Но <strong>если вы закроете глаза</strong> и будете молчать, <strong>вы станете сообщником</strong> массового убийцы, который называет себя вашим президентом.</p>
 <h2>Что вы выберете? </h2>
-<p>Если вы подключаетесь к Интернету из России или Беларуси, то ваше правительство активно блокирует ваш доступ к независимым источникам информации. Чтобы помочь вам узнать, что происходит на самом деле, здесь представлен сбалансированный список самых последних новостей из различных источников:</p>
+<p>Если вы подключаетесь к Интернету из России или Беларуси, то ваше правительство активно блокирует ваш доступ к независимым источникам информации. Чтобы помочь вам узнать, что происходит на самом деле, вот список переведенных новостей из разных источников без цензуры:</p>
 <div class="news">
 $news_list_ru
 $credits_ru

@@ -182,7 +182,7 @@ ARTICLEENHTML;
       }
       if (!empty($title_ru) and !empty($summary_ru) and !empty($source_ru))
       {
-        if (empty($content_en))
+        if (empty($content_ru))
         {
           $news_list_ru .= "<p><strong><a href=\"$link\" target=\"_blank\">$title_ru</a></strong><br>$summary_ru<br>" .
                            "<i>$source_ru</i></p>\n";
@@ -190,7 +190,7 @@ ARTICLEENHTML;
         else
         {
           $news_list_ru .= "<p><strong><a href=\"#\" onClick=\"showArticle('ru$id')\">$title_ru</a></strong><br>$summary_ru " .
-                           "<i><a href=\"#\" onClick=\"showArticle('en$id')\">&raquo; Читать далее</a></i><br>" .
+                           "<i><a href=\"#\" onClick=\"showArticle('ru$id')\">&raquo; Читать далее</a></i><br>" .
                            "<i>$source_ru</i></p>\n";
           $news_articles .= <<<ARTICLERUHTML
       

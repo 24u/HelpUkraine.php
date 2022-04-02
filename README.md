@@ -49,6 +49,11 @@ That's it. Nothing else needed. The special web page will appear in all the foll
 There is also a mechanism to prevent it from appearing, simply by adding `?helpukraine=0` to the URL. There is also a link using this approach in the end of the page.
 
 
+### How to test it
+
+Thanks to the True North PHP Hackathon in November of 2014, an online tool called [ShotSherpa](https://shotsherpa.com/) exists, which lets you check what your website looks like from different places around the world. It selects 8 random cities out of 200+ supported by default, but you can select your own (up to 8), including a few cities in Russia. Try it out at [https://shotsherpa.com/](https://shotsherpa.com/).
+
+
 ### Note the IP geolocation limit
 
 Note that the free API used by default to identify the client's country by IP has a limit of 45 calls per minute. If your website receives more traffict than that 45 visits per minute, then you might want to consider replacing the default API call in the `helpukraine_get_ip_country` function with another one that does not have such a low limit.

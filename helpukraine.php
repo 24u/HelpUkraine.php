@@ -3,7 +3,7 @@
 // Usage:
 // Either access this script directly or include it at tbe begining of your own page's PHP:
 //
-// include("helpukraine.php");
+// include_once("helpukraine.php");
 //
 // A special Stop The War page will be displayed instead of your web content if:
 //

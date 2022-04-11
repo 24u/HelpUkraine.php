@@ -38,7 +38,7 @@ Installing this script to your website is very easy, if your website runs on PHP
 
 Just download the helpukraine.php file, put it in the root folder of your web server. Then add the following line to the beginning (right after the first line beginning with `<?php`) of your index.php or whatever PHP file you're using to deliver your homepage:
 
-`include("helpukraine.php");`
+`include_once("helpukraine.php");`
 
 That's it. Nothing else needed. The special web page will appear in all the following situations:
 
@@ -57,6 +57,8 @@ Thanks to the True North PHP Hackathon in November of 2014, an online tool calle
 ### Note the IP geolocation limit
 
 Note that the free API used by default to identify the client's country by IP has a limit of 45 calls per minute. If your website receives more traffict than that 45 visits per minute, then you might want to consider replacing the default API call in the `helpukraine_get_ip_country` function with another one that does not have such a low limit.
+
+It's also a good idea to create a writable directory (`geoipcache` by default) to allow the script to cache each client's country to avoid overuse of the API, which could also slow down your website, especially if you're using a CMS that would include the script several times per request.
 
 
 ### Feel free to make or suggest changes

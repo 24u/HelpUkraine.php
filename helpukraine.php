@@ -16,6 +16,8 @@
 // For more information visit https://24usw.com/helpukraine
 //
 
+CONST GEOIP_CACHE = "./geoipcache/"; // Set this to a writable directory path to allow caching IP country lookups
+
 if (($_GET["helpukraine"] ?? 1) and (($force_help_ukraine ?? 0) or ($_GET["helpukraine"] ?? 0)
     or (basename($_SERVER['REQUEST_URI']) == basename(__FILE__))
     or in_array(helpukraine_get_ip_country(helpukraine_get_ip()), ["RU", "BY"])))
@@ -81,9 +83,18 @@ function helpukraine_get_ip()
 
 function helpukraine_get_ip_country($ip)
 {
+  // Try to use cache to avoid API overuse
+  if ($country = @file_get_contents(GEOIP_CACHE . $ip)) return $country;
+
   // This API is limited to 45 requests per minute
   $json = get_url("http://ip-api.com/json/$ip?fields=countryCode");
   $data = json_decode($json, true);
+  if (isset($data["countryCode"]))
+  {
+    // Try to cache result to avoid API overuse
+    if (!is_dir(GEOIP_CACHE)) @mkdir(GEOIP_CACHE, 0777, true);
+    @file_put_contents(GEOIP_CACHE . $ip, $data["countryCode"]);
+  }
   return ($data["countryCode"] ?? "error");
   
   // Subscription-based alternative with free 15,000 requests per hour: https://freegeoip.app
